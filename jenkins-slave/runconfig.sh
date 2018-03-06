@@ -1,4 +1,5 @@
 # !/bin/bash
+cd /root/.ssh
 if [ -f /root/.ssh/id_rsa ]; then
   echo "/root/.ssh/id_rsa already exists"
 else
