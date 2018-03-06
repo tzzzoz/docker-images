@@ -55,6 +55,10 @@ RUN eval "$(rbenv init -)"; rbenv install $RBENV_VERSION \
 &&  eval "$(rbenv init -)"; gem install bundler -f \
 &&  rm -rf /tmp/*
 
+# Set user jenkins to the image
+RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
+    echo "jenkins:jenkins" | chpasswd
+
 # Install JDK 8 (latest edition)
 RUN apt-get -q update &&\
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew" --no-install-recommends software-properties-common &&\
@@ -64,16 +68,19 @@ RUN apt-get -q update &&\
     apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
 
 # Generate ssh-keygen
+RUN mkdir /root/.ssh && \
+echo "Host *\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
+# Reset permissions
+RUN chown -R jenkins:jenkins /root/.ssh && \
+chmod -R 0700 /root/.ssh && \
+chmod -R 0600 /root/.ssh/*
 ADD runconfig.sh /tmp/.runconfig.sh
 
 # Set boot items (ssh keys)
-RUN chmod +x /tmp/.runconfig.sh \
-&& echo "/tmp/./.runconfig.sh" >> /root/.bashrc
+RUN chmod +x /tmp/.runconfig.sh
+/tmp/.runconfig.sh
+#&& echo "/tmp/./.runconfig.sh" >> /root/.bashrc
 #echo "[ -f /tmp/.runconfig.sh ] && rm -rf /tmp/.runconfig.sh" >> /root/.bashrc
-
-# Set user jenkins to the image
-RUN useradd -m -d /home/jenkins -s /bin/sh jenkins &&\
-    echo "jenkins:jenkins" | chpasswd
 
 # Standard SSH port
 EXPOSE 22
