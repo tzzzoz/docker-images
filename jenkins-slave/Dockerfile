@@ -24,7 +24,7 @@ ENV LC_ALL en_US.UTF-8
 # Install ruby 2.4.3
 RUN apt-get update \
 &&  apt-get install -y build-essential libssl-dev libreadline-dev zlib1g-dev \
-&&  apt-get install -y vim && apt-get install -y ruby-all-dev \
+&&  apt-get install -y git && apt-get install -y ruby-all-dev \
 &&  apt-get install -y postgresql-client libpq5 libpq-dev \
 &&  apt-get -q autoremove \
 &&  apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
